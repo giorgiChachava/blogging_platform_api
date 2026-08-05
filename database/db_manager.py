@@ -20,6 +20,13 @@ def _save_blogs(blogs):
     with open(DB_PATH, "w") as f:
         json.dump(blogs, f, indent=2)
 
+def find_new_id():
+    blogs = _load_blogs()
+    max_id=0
+    for blog in blogs:
+        id = int(blog['blog_id'])
+        max_id = max(max_id,id)
+    return max_id+1
 
 def save_blog(blog_dict):
     blogs = _load_blogs()

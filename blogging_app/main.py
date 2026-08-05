@@ -1,10 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
-from database.db_manager import _ensure_file_exists, _load_blogs, _save_blogs, get_all_blogs, save_blog, delete_all_bllogs, delete_blog
+from database.db_manager import _ensure_file_exists, _load_blogs, _save_blogs, get_all_blogs, save_blog, delete_all_bllogs, delete_blog, find_new_id
 
 class blog_details(BaseModel):
-    blog_id : str
     blog_title : str
     blog_content : str
     blog_category : str
@@ -24,12 +23,12 @@ app = FastAPI()
 @app.post("/posts/", status_code = 201)
 async def add_blog(blog : blog_details):
     blogs = _load_blogs()
-    blog_id = blog.blog_id
+    blog_id = find_new_id()
     for blogg in blogs:
         if blog_id == blogg['blog_id']:
             raise HTTPException(status_code=400, detail=f"blog with id = {blog_id} already exists")
-
-    save_blog(blog.model_dump())
+    blog_dict = {"blog_id": blog_id, **blog.model_dump()}
+    save_blog(blog_dict)
     return f"blog added. id = {blog_id}"
     
 @app.put("/posts/{blog_id}")
@@ -55,7 +54,7 @@ async def updated_blog(blog_id: str, new_blog: update_blog):
     
 
 @app.get("/posts")
-async def read_blogs(category: Optional[str]=None):
+async def read_blogs(category: str | None=None):
     blogs = _load_blogs()
     if category==None:
         return blogs
