@@ -9,14 +9,6 @@ class blog_details(BaseModel):
     blog_category : str
     tags : list[str]
     
-class update_blog(BaseModel):
-    blog_title : str
-    blog_category : str
-    blog_content : str
-    tags : list[str]
-
-
-
 app = FastAPI()
 
 
@@ -32,7 +24,7 @@ async def add_blog(blog : blog_details):
     return f"blog added. id = {blog_id}"
     
 @app.put("/posts/{blog_id}")
-async def updated_blog(blog_id: str, new_blog: update_blog):
+async def updated_blog(blog_id: int, new_blog: blog_details):
     blogs = _load_blogs()
     check = True
     for blog in blogs:
