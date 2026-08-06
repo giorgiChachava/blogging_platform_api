@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Optional
+from typing import Annotated
 from database.db_manager import _ensure_file_exists, _load_blogs, _save_blogs, get_all_blogs, save_blog, delete_all_bllogs, delete_blog, find_new_id
 
 class blog_details(BaseModel):
@@ -24,7 +24,7 @@ async def add_blog(blog : blog_details):
     return f"blog added. id = {blog_id}"
     
 @app.put("/posts/{blog_id}")
-async def updated_blog(blog_id: int, new_blog: blog_details):
+async def updated_blog(blog_id: Annotated[int, "This is a blog's id that you want to update"], new_blog: blog_details):
     blogs = _load_blogs()
     check = True
     for blog in blogs:

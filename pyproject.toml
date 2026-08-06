@@ -1,0 +1,2 @@
+[tool.fastapi]
+entrypoint = "blogging_app.main:app"
